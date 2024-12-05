@@ -1,0 +1,7 @@
+<app-grid
+  [displayedColumns]="displayedColumns"
+  [data]="heroes()"
+  [filterColumn]="'name'"
+  [sortableColumns]="sortables"
+  (onActionEvent)="onClickAction($event)"
+></app-grid>

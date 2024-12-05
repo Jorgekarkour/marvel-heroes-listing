@@ -1,0 +1,50 @@
+<section>
+  @if (filterColumn()) {
+  <app-filter
+    [label]="'Filter by name'"
+    [placeholder]="'Type a name...'"
+    [(filterChips)]="valueToFilter"
+  />
+  }
+  <div class="mat-elevation-z8">
+    <mat-table matSort [dataSource]="dataSource">
+      @for(column of displayedColumns(); track $index) {
+      <ng-container [matColumnDef]="column">
+        <mat-header-cell
+          *matHeaderCellDef
+          mat-sort-header
+          [disabled]="!sortableColumns().includes(column)"
+        >
+          {{ column | spaceBeforeCaps }}
+        </mat-header-cell>
+        <mat-cell
+          *matCellDef="let element"
+          (click)="handleRowClick(element, column)"
+        >
+          {{ element[column] }}
+          @if(column === 'action') {
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="onAction(element, 'edit')"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            color="warn"
+            (click)="onAction(element, 'delete')"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+          }
+        </mat-cell>
+      </ng-container>
+      }
+      <mat-header-row *matHeaderRowDef="displayedColumns()"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns()"></mat-row>
+    </mat-table>
+    <mat-paginator [pageSizeOptions]="[10, 20, 40, 60]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</section>

@@ -1,0 +1,64 @@
+<div mat-dialog-title>
+  <h1>Hero form</h1>
+</div>
+<form [formGroup]="heroForm" (ngSubmit)="onSubmit()">
+  <div mat-dialog-content class="content">
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label> Name </mat-label>
+        <input matInput type="text" formControlName="name" />
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label> Gender </mat-label>
+        <input matInput type="text" formControlName="gender" />
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label> Citizenship </mat-label>
+        <input matInput type="text" formControlName="citizenship" />
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label> Skills </mat-label>
+        <input matInput type="text" formControlName="skills" />
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label> Occupation </mat-label>
+        <input matInput type="text" formControlName="occupation" />
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label> Member Of </mat-label>
+        <input matInput type="text" formControlName="memberOf" />
+      </mat-form-field>
+    </div>
+    <div class="row">
+      <mat-form-field appearance="outline">
+        <mat-label> Creator </mat-label>
+        <input matInput type="text" formControlName="creator" />
+      </mat-form-field>
+    </div>
+    @if(!heroForm.disabled) {
+    <div mat-dialog-actions class="action">
+      <button mat-raised-button [mat-dialog-close]="false" type="button">
+        Cancel
+      </button>
+      <button
+        [disabled]="!heroForm.valid"
+        mat-raised-button
+        type="submit"
+        color="primary"
+      >
+        {{ getButtonLabel() }}
+      </button>
+    </div>
+    }
+  </div>
+</form>

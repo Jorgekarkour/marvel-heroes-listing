@@ -15,8 +15,8 @@ import { ModalService } from '@services/modal/modal.service';
 })
 export class HeroDashboardComponent<T> implements OnInit {
   heroes = signal<Hero[]>([]);
-  displayedColumns: string[] = ['name','skills','memberOf', 'action'];
-  sortables: string[] = ['name', 'skills', 'memberOf'];
+  displayedColumns: string[] = ['name', 'gender', 'citizenship','skills', 'memberOf', 'action'];
+  sortables: string[] = ['name', 'gender','citizenship', 'skills', 'memberOf'];
   private readonly _heroService = inject(HeroService);
   private readonly _modalService = inject(ModalService);
 

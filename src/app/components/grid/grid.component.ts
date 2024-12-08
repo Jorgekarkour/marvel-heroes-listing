@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, input, OnInit, output, signal, viewChild } from '@angular/core';
+import { Component, effect, input, OnInit, output, signal, viewChild } from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -8,8 +8,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { SpaceBeforeCapsPipe } from 'src/app/pipes/space-before-caps.pipe';
 import { CommonModule } from '@angular/common';
 import { GridAction } from '@models/gridAction.model';
+import { PieChartComponent } from '@components/pie-chart/pie-chart.component';
 
-const MATERIAL_MODULES = [MatTableModule, MatSortModule, MatPaginatorModule, MatIconModule, MatButtonModule]
+const MATERIAL_MODULES = [MatTableModule, MatSortModule, MatPaginatorModule, MatIconModule, MatButtonModule, PieChartComponent]
 
 @Component({
   selector: 'app-grid',

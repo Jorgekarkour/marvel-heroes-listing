@@ -15,7 +15,15 @@
           mat-sort-header
           [disabled]="!sortableColumns().includes(column)"
         >
-          {{ column | spaceBeforeCaps }}
+          <div>
+            {{ column | spaceBeforeCaps }}
+            <div>
+              <app-pie-chart
+                [data]="data()"
+                [fieldToShow]="'gender'"
+              ></app-pie-chart>
+            </div>
+          </div>
         </mat-header-cell>
         <mat-cell
           *matCellDef="let element"

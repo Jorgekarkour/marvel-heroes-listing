@@ -48,8 +48,6 @@ export class HeroDashboardComponent<T> implements OnInit {
     const handler = actionHandlers[actionEvent.action];
     if (handler) {
       handler(actionEvent.data);
-    } else {
-      console.warn(`No handler defined for action: ${actionEvent.action}`);
     }
   }
 

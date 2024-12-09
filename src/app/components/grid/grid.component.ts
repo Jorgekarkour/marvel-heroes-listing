@@ -8,15 +8,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { SpaceBeforeCapsPipe } from 'src/app/pipes/space-before-caps.pipe';
 import { CommonModule } from '@angular/common';
 import { GridAction } from '@models/gridAction.model';
-import { PieChartComponent } from '@components/pie-chart/pie-chart.component';
-import { BarChartComponent } from '@components/bar-chart/bar-chart.component';
 import { ChartsContainerComponent } from 'src/app/containers/charts-container/charts-container.component';
 
 const MATERIAL_MODULES = [MatTableModule, MatSortModule, MatPaginatorModule, MatIconModule, MatButtonModule]
 
 @Component({
   selector: 'app-grid',
-  imports: [FilterComponent, SpaceBeforeCapsPipe, PieChartComponent, BarChartComponent, ChartsContainerComponent, CommonModule, MATERIAL_MODULES],
+  imports: [FilterComponent, SpaceBeforeCapsPipe, ChartsContainerComponent, CommonModule, MATERIAL_MODULES],
   templateUrl: './grid.component.html',
   styleUrl: './grid.component.scss'
 })

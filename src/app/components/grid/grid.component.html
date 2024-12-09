@@ -32,7 +32,7 @@
           *matCellDef="let element"
           (click)="handleRowClick(element, column)"
         >
-          {{ element[column] }}
+          {{ element[column] | titlecase }}
           @if(column === 'action') {
           <button
             mat-icon-button

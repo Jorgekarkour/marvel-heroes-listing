@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 @Component({
   selector: 'app-pie-chart',
   templateUrl: './pie-chart.component.html',
-  styleUrls: ['./pie-chart.component.scss'],
 })
 export class PieChartComponent<T> implements AfterViewInit {
   data = input.required<T[]>();

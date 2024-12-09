@@ -14,7 +14,6 @@ const MATERIAL_MODULES = [MatLabel, MatFormField, MatInput, MatDialogModule, Mat
   selector: 'app-modal',
   imports: [ReactiveFormsModule, MATERIAL_MODULES],
   templateUrl: './modal.component.html',
-  styleUrl: './modal.component.scss'
 })
 export class ModalComponent implements OnInit {
   heroForm!: FormGroup;

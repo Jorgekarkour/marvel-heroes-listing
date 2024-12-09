@@ -4,7 +4,6 @@ import * as d3 from 'd3';
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.scss'],
 })
 export class BarChartComponent<T> implements AfterViewInit {
   data = input.required<T[]>();
@@ -19,17 +18,17 @@ export class BarChartComponent<T> implements AfterViewInit {
   constructor() {
     effect(() => {
       if (this.data() && this.svg) {
-        this.drawBars(this.data(), this.fieldToShow());
+        this._drawBars(this.data(), this.fieldToShow());
       }
     });
   }
 
   ngAfterViewInit(): void {
-    this.createSvg();
-    this.drawBars(this.data(), this.fieldToShow());
+    this._createSvg();
+    this._drawBars(this.data(), this.fieldToShow());
   }
 
-  private createSvg(): void {
+  private _createSvg(): void {
     this.svg = d3
       .select(`#${this.chartId()}`)
       .append('svg')
@@ -43,24 +42,24 @@ export class BarChartComponent<T> implements AfterViewInit {
   }
 
 
-  private drawBars(data: any[], field: string): void {
+  private _drawBars(data: any[], field: string): void {
 
     this.svg.selectAll('*').remove();
 
-    // Crear la escala para el eje X
+    // Create X axis scale
     const x = d3
       .scaleBand()
       .range([0, this.width])
       .domain(data.map((d) => d.key))
       .padding(0.2);
 
-    // Crear la escala para el eje Y
+    // Create Y axis scale
     const y = d3
       .scaleLinear()
       .domain([0, d3.max(data, (d) => d.count || 0)])
       .range([this.height, 0]);
 
-    // Dibujar el eje X
+    // Draw X axis
     this.svg
       .append('g')
       .attr('transform', 'translate(0,' + this.height + ')')
@@ -68,13 +67,13 @@ export class BarChartComponent<T> implements AfterViewInit {
       .selectAll('text')
       .style('display', 'none');
 
-    // Dibujar el eje Y
+    // Draw Y axis
     this.svg
       .append('g')
       .call(d3.axisLeft(y).ticks(0))
       .style('display', 'none');
 
-    // Crear el tooltip
+    // Tooltip
     const tooltip = d3
       .select('body')
       .append('div')
@@ -87,7 +86,7 @@ export class BarChartComponent<T> implements AfterViewInit {
       .style('font-size', '12px')
       .style('display', 'none');
 
-    // Crear las barras
+    // Create bars
     this.svg
       .selectAll('bars')
       .data(data)

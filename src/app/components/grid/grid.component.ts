@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SpaceBeforeCapsPipe } from 'src/app/pipes/space-before-caps.pipe';
 import { CommonModule } from '@angular/common';
 import { GridAction } from '@models/gridAction.model';
-import { ChartsContainerComponent } from 'src/app/containers/charts-container/charts-container.component';
+import { ChartsContainerComponent } from '@containers/charts-container/charts-container.component';
 
 const MATERIAL_MODULES = [MatTableModule, MatSortModule, MatPaginatorModule, MatIconModule, MatButtonModule]
 
@@ -48,7 +48,6 @@ export class GridComponent<T> implements OnInit {
       this.dataSource.filterPredicate = (data: T, filter: string) => {
         const filterValues = JSON.parse(filter) as string[];
         if (!filterValues || filterValues.length === 0 || !this.filterColumn) return true;
-        // Only filter on the specific column
         return filterValues.some((value) =>
           String(data[this.filterColumn() as keyof T]).toLowerCase().includes(value.toLowerCase())
         );
@@ -57,12 +56,12 @@ export class GridComponent<T> implements OnInit {
   }
   
   applyFilter(filterValues: string[]): void {
-    this.dataSource.filter = JSON.stringify(filterValues); // Trigger the filterPredicate
+    this.dataSource.filter = JSON.stringify(filterValues);
   }
 
   handleRowClick(row: any, column: string): void {
     if (column === 'action') {
-      return; // No hacer nada si la columna es 'action'
+      return;
     }
     this.onAction(row, 'showInfo');
   }

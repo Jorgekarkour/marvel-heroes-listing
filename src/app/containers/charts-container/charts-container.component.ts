@@ -7,7 +7,6 @@ import * as d3 from 'd3';
   selector: 'app-charts-container',
   imports: [PieChartComponent, BarChartComponent],
   templateUrl: './charts-container.component.html',
-  styleUrl: './charts-container.component.scss'
 })
 export class ChartsContainerComponent<T> implements OnInit {
   data = input.required<T[]>();

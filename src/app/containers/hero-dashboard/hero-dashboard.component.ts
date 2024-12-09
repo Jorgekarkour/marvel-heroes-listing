@@ -10,8 +10,7 @@ import { ModalService } from '@services/modal/modal.service';
 @Component({
   selector: 'app-hero-dashboard',
   imports: [GridComponent],
-  templateUrl: './hero-dashboard.component.html',
-  styleUrl: './hero-dashboard.component.scss'
+  templateUrl: './hero-dashboard.component.html'
 })
 export class HeroDashboardComponent<T> implements OnInit {
   heroes = signal<Hero[]>([]);

@@ -9,7 +9,6 @@ const MATERIAL_MODULES = [MatToolbarModule, MatIconModule, MatButtonModule]
   selector: 'app-toolbar',
   imports: [MATERIAL_MODULES],
   templateUrl: './toolbar.component.html',
-  styleUrl: './toolbar.component.scss'
 })
 export class ToolbarComponent {
   onCreateNewHeroEvent = output<void>();

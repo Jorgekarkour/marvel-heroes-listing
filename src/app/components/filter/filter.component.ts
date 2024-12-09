@@ -10,7 +10,6 @@ const MATERIAL_MODULES = [MatLabel, MatFormFieldModule, MatFormField, MatChipsMo
   selector: 'app-filter',
   imports: [FormsModule, MATERIAL_MODULES],
   templateUrl: './filter.component.html',
-  styleUrl: './filter.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterComponent {

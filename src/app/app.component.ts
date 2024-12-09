@@ -12,7 +12,6 @@ const MATERIAL_MODULES = [MatCardModule];
   selector: 'app-root',
   imports: [RouterOutlet, ToolbarComponent, MATERIAL_MODULES],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
 })
 
 export class AppComponent {

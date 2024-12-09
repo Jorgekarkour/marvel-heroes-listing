@@ -1,87 +1,126 @@
-import { Component, effect, input, OnInit } from '@angular/core';
+import { AfterViewInit, Component, effect, input } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-bar-chart',
-  imports: [],
   templateUrl: './bar-chart.component.html',
-  styleUrl: './bar-chart.component.scss'
+  styleUrls: ['./bar-chart.component.scss'],
 })
-export class BarChartComponent<T> implements OnInit {
-
+export class BarChartComponent<T> implements AfterViewInit {
   data = input.required<T[]>();
+  fieldToShow = input.required<string>();
+  chartId = input.required<string>();
 
   private svg: any;
-  private margin = 50;
-  private width = 750 - (this.margin * 2);
-  private height = 400 - (this.margin * 2);
+  private margin = 25
+  private width = 250;
+  private height = 150;
 
   constructor() {
-    effect(()=> {
-      this.drawBars(this.data());
-    })
+    effect(() => {
+      if (this.data() && this.svg) {
+        this.drawBars(this.data(), this.fieldToShow());
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.createSvg();
+    this.drawBars(this.data(), this.fieldToShow());
   }
 
   private createSvg(): void {
-    this.svg = d3.select("figure#bar")
-    .append("svg")
-    .attr("width", this.width + (this.margin * 2))
-    .attr("height", this.height + (this.margin * 2))
-    .append("g")
-    .attr("transform", "translate(" + this.margin + "," + this.margin + ")");
+    this.svg = d3
+      .select(`#${this.chartId()}`)
+      .append('svg')
+      .attr('width', this.width + this.margin)
+      .attr('height', this.height + this.margin)
+      .append('g')
+      .attr(
+        'transform',
+        'translate(' + this.margin / 2 + ',' + this.margin / 2 + ')'
+      );
   }
 
-  private processData(data: any[]): any[] {
+  private processData(data: any[], field: string): any[] {
     const counts = d3.rollups(
       data,
       (v) => v.length,
-      (d) => d.gender
-    )
-    return counts.map(([key, value]) => ({gender: key, count: value}))
+      (d) => d[field] 
+    );
+    return counts
+    .map(([key, value]) => ({ key, count: value }))
+    .sort((a, b) => b.count - a.count);
   }
-  
-  private drawBars(data: any[]): void {
-    const processedData = this.processData(data);
+
+  private drawBars(data: any[], field: string): void {
+    const processedData = this.processData(data, field);
+
     this.svg.selectAll('*').remove();
-    // Create the X-axis band scale
-    const x = d3.scaleBand()
-    .range([0, this.width])
-    .domain(processedData.map(d => d.gender))
-    .padding(0.2);
 
-    // Draw the X-axis on the DOM
-    this.svg.append("g")
-    .attr("transform", "translate(0," + this.height + ")")
-    .call(d3.axisBottom(x))
-    .selectAll("text")
-    .attr("transform", "translate(-10,0)rotate(-45)")
-    .style("text-anchor", "end");
+    // Crear la escala para el eje X
+    const x = d3
+      .scaleBand()
+      .range([0, this.width])
+      .domain(processedData.map((d) => d.key))
+      .padding(0.2);
 
-    // Create the Y-axis band scale
-    const y = d3.scaleLinear()
-    .domain([0, d3.max(processedData, (d) => d.count || 0)])
-    .range([this.height, 0]);
+    // Crear la escala para el eje Y
+    const y = d3
+      .scaleLinear()
+      .domain([0, d3.max(processedData, (d) => d.count || 0)])
+      .range([this.height, 0]);
 
-    // Draw the Y-axis on the DOM
-    this.svg.append("g")
-    .call(d3.axisLeft(y));
+    // Dibujar el eje X
+    this.svg
+      .append('g')
+      .attr('transform', 'translate(0,' + this.height + ')')
+      .call(d3.axisBottom(x).tickSize(0))
+      .selectAll('text')
+      .style('display', 'none');
 
-    // Create and fill the bars
-    this.svg.selectAll("bars")
-    .data(processedData)
-    .enter()
-    .append("rect")
-    .attr("x", (d: any) => x(d.gender))
-    .attr("y", (d: any) => y(d.count))
-    .attr("width", x.bandwidth())
-    .attr("height", (d: any) => this.height - y(d.count))
-    .attr("fill", "#d04a35");
+    // Dibujar el eje Y
+    this.svg
+      .append('g')
+      .call(d3.axisLeft(y).ticks(0))
+      .style('display', 'none');
+
+    // Crear el tooltip
+    const tooltip = d3
+      .select('body')
+      .append('div')
+      .attr('id', 'tooltip')
+      .style('position', 'absolute')
+      .style('background', '#fff')
+      .style('border', '1px solid #ccc')
+      .style('padding', '5px')
+      .style('border-radius', '5px')
+      .style('font-size', '12px')
+      .style('display', 'none');
+
+    // Crear las barras
+    this.svg
+      .selectAll('bars')
+      .data(processedData)
+      .enter()
+      .append('rect')
+      .attr('x', (d: any) => x(d.key) || 0)
+      .attr('y', (d: any) => y(d.count))
+      .attr('width', x.bandwidth())
+      .attr('height', (d: any) => this.height - y(d.count))
+      .attr('fill', '#4285F4')
+      .on('mouseover', (event: any, d: { key: any; count: any; }) => {
+        tooltip
+          .style('display', 'block')
+          .html(`<strong>${d.key}:</strong> ${d.count}`);
+      })
+      .on('mousemove', (event: { pageX: number; pageY: number; }) => {
+        tooltip
+          .style('left', event.pageX + 10 + 'px')
+          .style('top', event.pageY + 10 + 'px');
+      })
+      .on('mouseout', () => {
+        tooltip.style('display', 'none');
+      });
   }
-
-ngOnInit(): void {
-  this.createSvg();
-  this.drawBars(this.data());
-}
-
-
 }

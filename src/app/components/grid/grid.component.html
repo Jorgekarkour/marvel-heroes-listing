@@ -10,16 +10,32 @@
     <mat-table matSort [dataSource]="dataSource">
       @for(column of displayedColumns(); track $index) {
       <ng-container [matColumnDef]="column">
-        <mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          [disabled]="!sortableColumns().includes(column)"
-        >
-          <div>
-            {{ column | spaceBeforeCaps }}
-            <div>
-              <app-pie-chart [data]="data()"></app-pie-chart>
-            </div>
+        <mat-header-cell *matHeaderCellDef
+          ><div>
+            @if(column != 'name' && column != 'action') {
+            <app-charts-container
+              [data]="data()"
+              [fieldToShow]="column"
+              [chartId]="'bar-chart-' + column"
+            >
+            </app-charts-container>
+            <app-pie-chart
+              [data]="data()"
+              [fieldToShow]="column"
+              [chartId]="'pie-chart-' + column"
+            ></app-pie-chart>
+            <app-bar-chart
+              [data]="data()"
+              [fieldToShow]="column"
+              [chartId]="'bar-chart-' + column"
+            ></app-bar-chart>
+            }
+            <span
+              mat-sort-header
+              [disabled]="!sortableColumns().includes(column)"
+            >
+              {{ column | spaceBeforeCaps }}</span
+            >
           </div>
         </mat-header-cell>
         <mat-cell

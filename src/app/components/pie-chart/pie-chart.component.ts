@@ -1,107 +1,113 @@
-import { Component, effect, input, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  effect,
+  input,
+} from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
   selector: 'app-pie-chart',
-  imports: [],
   templateUrl: './pie-chart.component.html',
-  styleUrl: './pie-chart.component.scss'
+  styleUrls: ['./pie-chart.component.scss'],
 })
-export class PieChartComponent<T> implements OnInit {
-
+export class PieChartComponent<T> implements AfterViewInit {
   data = input.required<T[]>();
+  fieldToShow = input.required<string>();
+  chartId = input.required<string>(); 
 
   private svg: any;
-  private margin = 30;
-  private width = 150;
-  private height = 100;
-  // The radius of the pie chart is half the smallest side
+  private margin = 10;
+  private width = 110;
+  private height = 90;
+
   private radius = Math.min(this.width, this.height) / 2 - this.margin;
 
-  constructor () {
-    effect(() => this.drawChart(this.data()));
+  private colorScale: d3.ScaleOrdinal<string, string>;
+
+  constructor() {
+    this.colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+    effect(() => {
+      if (this.data() && this.svg) {
+        this.drawChart(this.data(), this.fieldToShow());
+      }
+    });
   }
 
-  private createSvg(): void {
-    this.svg = d3.select("figure#pie")
-    .append("svg")
-    .attr("width", this.width)
-    .attr("height", this.height)
-    .append("g")
-    .attr(
-      "transform",
-      "translate(" + this.width / 2 + "," + this.height / 2 + ")"
+  ngAfterViewInit(): void {
+    this.createSvg();
+    this.drawChart(this.data(), this.fieldToShow());
+  }
+
+  private async createSvg(): Promise<void> {
+    this.svg = d3
+      .select(`#${this.chartId()}`)
+      .append('svg')
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .append('g')
+      .attr(
+        'transform',
+        'translate(' + this.width / 2 + ',' + this.height / 2 + ')'
+      );
+    console.log(`Creating SVG for chartId: ${this.chartId()}`);
+  }
+
+  private processData(data: any[], field: string): any[] {
+    const counts = d3.rollups(
+      data,
+      (v) => v.length,
+      (d) => d[field]
     );
-}
+    return counts.map(([key, value]) => ({ key, count: value }));
+  }
 
-private processData(data: any[]): any[] {
-  const counts = d3.rollups(
-    data,
-    (v) => v.length,
-    (d) => d.gender
-  )
-  return counts.map(([key, value]) => ({gender: key, count: value}))
-}
+  private updateColorScale(keys: string[]): void {
+    const currentDomain = this.colorScale.domain();
+    const updatedDomain = Array.from(new Set([...currentDomain, ...keys]));
 
-private drawChart(data: any[]): void {
-  const processedData = this.processData(data);
+    this.colorScale.domain(updatedDomain);
+  }
 
-  // Crear color para cada segmento
-  const color = d3
-    .scaleOrdinal()
-    .domain(processedData.map((d) => d.gender))
-    .range(d3.schemeCategory10);
+  private drawChart(data: any[], field: string): void {
+    const processedData = this.processData(data, field);
 
-  // Crear el gráfico de pastel
-  const pie = d3.pie<any>().value((d: any) => d.count);
+    const uniqueKeys = processedData.map((d) => d.key);
+    this.updateColorScale(uniqueKeys);
 
-  const arc = d3
-    .arc()
-    .innerRadius(0)
-    .outerRadius(this.radius);
+    const pie = d3.pie<any>().value((d: any) => d.count);
 
-  // Unir los datos y dibujar el gráfico
-  const path = this.svg.selectAll('path').data(pie(processedData));
+    const arc = d3
+      .arc()
+      .innerRadius(0)
+      .outerRadius(this.radius);
 
-  // Actualizar los segmentos existentes
-  path
-    .enter()
-    .append('path')
-    .merge(path as any)
-    .transition()
-    .duration(1000)
-    .attr('d', arc)
-    .attr('fill', (d: any) => color(d.data.gender))
-    .attr('stroke', '#121926')
-    .style('stroke-width', '1px');
+    this.svg.selectAll('*').remove();
 
-  path.exit().remove();
+    this.svg
+      .selectAll('path')
+      .data(pie(processedData))
+      .enter()
+      .append('path')
+      .attr('d', arc)
+      .attr('fill', (d: any) => this.colorScale(d.data.key))
+      .attr('stroke', '#121926')
+      .style('stroke-width', '1px');
 
-  // Añadir etiquetas
-  const label = d3
-    .arc()
-    .innerRadius(100)
-    .outerRadius(this.radius);
+    const label = d3
+      .arc()
+      .innerRadius(20)
+      .outerRadius(this.radius);
 
-  const text = this.svg.selectAll('text').data(pie(processedData));
-
-  text
-    .enter()
-    .append('text')
-    .merge(text as any)
-    .transition()
-    .duration(1000)
-    .text((d: any) => `${d.data.gender} (${d.data.count})`)
-    .attr('transform', (d: any) => `translate(${label.centroid(d)})`)
-    .style('text-anchor', 'middle')
-    .style('font-size', '15px');
-
-  text.exit().remove();
-}
-
-ngOnInit(): void {
-  this.createSvg();
-  this.drawChart(this.data());
-}
-
+    this.svg
+      .selectAll('text')
+      .data(pie(processedData))
+      .enter()
+      .append('text')
+      .text((d: any) => `${d.data.key} (${d.data.count})`)
+      .attr('transform', (d: any) => `translate(${label.centroid(d)})`)
+      .style('text-anchor', 'middle')
+      .style('font-size', '12px');
+  }
 }

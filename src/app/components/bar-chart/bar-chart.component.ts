@@ -12,9 +12,9 @@ export class BarChartComponent<T> implements AfterViewInit {
   chartId = input.required<string>();
 
   private svg: any;
-  private margin = 25
-  private width = 250;
-  private height = 150;
+  private margin = 5
+  private width = 275;
+  private height = 140;
 
   constructor() {
     effect(() => {

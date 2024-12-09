@@ -42,19 +42,8 @@ export class BarChartComponent<T> implements AfterViewInit {
       );
   }
 
-  private processData(data: any[], field: string): any[] {
-    const counts = d3.rollups(
-      data,
-      (v) => v.length,
-      (d) => d[field] 
-    );
-    return counts
-    .map(([key, value]) => ({ key, count: value }))
-    .sort((a, b) => b.count - a.count);
-  }
 
   private drawBars(data: any[], field: string): void {
-    const processedData = this.processData(data, field);
 
     this.svg.selectAll('*').remove();
 
@@ -62,13 +51,13 @@ export class BarChartComponent<T> implements AfterViewInit {
     const x = d3
       .scaleBand()
       .range([0, this.width])
-      .domain(processedData.map((d) => d.key))
+      .domain(data.map((d) => d.key))
       .padding(0.2);
 
     // Crear la escala para el eje Y
     const y = d3
       .scaleLinear()
-      .domain([0, d3.max(processedData, (d) => d.count || 0)])
+      .domain([0, d3.max(data, (d) => d.count || 0)])
       .range([this.height, 0]);
 
     // Dibujar el eje X
@@ -101,7 +90,7 @@ export class BarChartComponent<T> implements AfterViewInit {
     // Crear las barras
     this.svg
       .selectAll('bars')
-      .data(processedData)
+      .data(data)
       .enter()
       .append('rect')
       .attr('x', (d: any) => x(d.key) || 0)

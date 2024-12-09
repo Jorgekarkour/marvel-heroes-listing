@@ -1,1 +1,13 @@
-
+@if(processedData().length > 5) {
+<app-bar-chart
+  [data]="processedData()"
+  [fieldToShow]="fieldToShow()"
+  [chartId]="'bar-chart-' + chartId()"
+></app-bar-chart>
+} @else {
+<app-pie-chart
+  [data]="processedData()"
+  [fieldToShow]="fieldToShow()"
+  [chartId]="'pie-chart-' + chartId()"
+></app-pie-chart>
+}

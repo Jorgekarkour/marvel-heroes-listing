@@ -16,19 +16,9 @@
             <app-charts-container
               [data]="data()"
               [fieldToShow]="column"
-              [chartId]="'bar-chart-' + column"
+              [chartId]="column"
             >
             </app-charts-container>
-            <app-pie-chart
-              [data]="data()"
-              [fieldToShow]="column"
-              [chartId]="'pie-chart-' + column"
-            ></app-pie-chart>
-            <app-bar-chart
-              [data]="data()"
-              [fieldToShow]="column"
-              [chartId]="'bar-chart-' + column"
-            ></app-bar-chart>
             }
             <span
               mat-sort-header

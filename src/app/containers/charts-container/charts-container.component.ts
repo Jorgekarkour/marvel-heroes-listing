@@ -18,8 +18,9 @@ export class ChartsContainerComponent<T> implements OnInit {
 
   constructor () {
     effect(() => {
-      const newProcessedData = this._processData(this.data(), this.fieldToShow())
-      this.processedData.set(newProcessedData);
+      const newData = this.data();
+      const field = this.fieldToShow();
+      this.processedData.update((currentData) => this._processData(newData, field));
     })
   }
 
@@ -34,7 +35,8 @@ export class ChartsContainerComponent<T> implements OnInit {
       (d) => d[field] 
     );
     return counts
-    .map(([key, value]) => ({ key, count: value }));
+    .map(([key, value]) => ({ key, count: value }))
+    .sort((a, b) => b.count - a.count);
   }
 
 }

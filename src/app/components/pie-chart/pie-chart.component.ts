@@ -30,17 +30,19 @@ export class PieChartComponent<T> implements AfterViewInit {
 
     effect(() => {
       if (this.data() && this.svg) {
+        console.log(this.chartId() + ":effect")
         this.drawChart(this.data(), this.fieldToShow());
       }
     });
   }
 
   ngAfterViewInit(): void {
+    console.log(this.chartId() + " :afterViewInit")
     this.createSvg();
     this.drawChart(this.data(), this.fieldToShow());
   }
 
-  private async createSvg(): Promise<void> {
+  private createSvg(): void {
     this.svg = d3
       .select(`#${this.chartId()}`)
       .append('svg')
@@ -54,15 +56,6 @@ export class PieChartComponent<T> implements AfterViewInit {
     console.log(`Creating SVG for chartId: ${this.chartId()}`);
   }
 
-  private processData(data: any[], field: string): any[] {
-    const counts = d3.rollups(
-      data,
-      (v) => v.length,
-      (d) => d[field]
-    );
-    return counts.map(([key, value]) => ({ key, count: value }));
-  }
-
   private updateColorScale(keys: string[]): void {
     const currentDomain = this.colorScale.domain();
     const updatedDomain = Array.from(new Set([...currentDomain, ...keys]));
@@ -71,9 +64,8 @@ export class PieChartComponent<T> implements AfterViewInit {
   }
 
   private drawChart(data: any[], field: string): void {
-    const processedData = this.processData(data, field);
 
-    const uniqueKeys = processedData.map((d) => d.key);
+    const uniqueKeys = data.map((d) => d.key);
     this.updateColorScale(uniqueKeys);
 
     const pie = d3.pie<any>().value((d: any) => d.count);
@@ -87,7 +79,7 @@ export class PieChartComponent<T> implements AfterViewInit {
 
     this.svg
       .selectAll('path')
-      .data(pie(processedData))
+      .data(pie(data))
       .enter()
       .append('path')
       .attr('d', arc)
@@ -102,7 +94,7 @@ export class PieChartComponent<T> implements AfterViewInit {
 
     this.svg
       .selectAll('text')
-      .data(pie(processedData))
+      .data(pie(data))
       .enter()
       .append('text')
       .text((d: any) => `${d.data.key} (${d.data.count})`)
